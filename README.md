@@ -1,7 +1,7 @@
 # CodEditor
 An in-browser code editor.
 
-##Features
+## Features
 
 * Supports multiple files in one tab
 * Support for other files opened in editor (HTML files only)
@@ -10,7 +10,7 @@ An in-browser code editor.
 * HTML previews.
 * Settings
 
-##Currently supported languages
+## Currently supported languages
 
 * HTML
 * CSS
