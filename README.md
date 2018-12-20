@@ -1,5 +1,5 @@
 # CodEditor
-An in-browser code editor.
+An in-browser code editor. It is unfinished now.
 
 ## Features
 
