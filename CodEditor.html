@@ -86,19 +86,14 @@ document.getElementById("text").oninput = function(){
 function typify(text){
 	text = text.replace(/\&/g, "&amp;").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
 	text = text
-	.replace(/\&lt;.*?\&gt;/g, function(i){
+	.replace(/\&lt;(.|\n)*?\&gt;/gm, function(i){
+		i = i
+		.replace(/\s.*?(?=\&gt;)/g, function(j){
+			return '<span class="hl-attr">' + j + "</span>";
+		});
 		return '<span class="hl-tag">' + i + "</span>";
 	})
-	.replace(/\&lt;.*? .*?\&gt;/g, function(i){
-		//return '<span class="hl-tag">' + i + "</span>";
-		i = i
-		.replace(/ .*/g, function(j){
-			return '<span class="hl-attr">' + j + "</span>";
-		})
-		.replace(/\&gt;/g, '</span><span class="hl-tag">&gt;</span>');
-		return '<span class="hl-tag">' + i;
-	})
-	.replace(/\&amp;.*?;/g, function(i){
+	.replace(/\&amp;(.|\n)*?;/g, function(i){
 		return '<span class="hl-entity">' + i + "</span>";
 	});
 	return text;
