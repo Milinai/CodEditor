@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<style>
+*{
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+	box-sizing: border-box;
+	tab-size: 4;
+}
+body{
+	--fontsize: 11px;
+}
+header{
+	height: 100px;
+	width: 100vw;
+	background-color: #EEE;
+	position: fixed;
+}
+input{
+	box-shadow: 0 0 2px #0009;
+	background-color: #FFF;
+}
+:-ms-clear{
+	display: none;
+}
+::-webkit-inner-spin-button, ::-webkit-outer-spin-button{
+	display: none;
+}
+#text{
+	
+}
+#text, #area{
+	padding: 5px;
+	font-family: monospace;
+	background-color: #FFF;
+	position: fixed;
+	top: 100px;
+	left: 0;
+	width: 100vw;
+	height: calc(100vh - 100px);
+	cursor: text;
+	font-size: var(--fontsize);
+	white-space: pre-wrap;
+}
+#area{
+	pointer-events: none;
+}
+.hl-tag{
+	color: #B70;
+}
+.hl-attr{
+	color: #04D;
+}
+.hl-entity{
+	color: #C00;
+}
+		</style>
+		<style id="settings"></style>
+		<script>
+var numins = document.getElementsByClassName("numberinput");
+
+setTimeout(function(){
+
+for(let i = 0; i < numins.length; i++){
+	numins[i].onkeydown = function(){
+		if(!((48 <= event.keyCode && event.keyCode <= 57) || event.keyCode === 8 || event.keyCode === 46 || (37 <= event.keyCode && event.keyCode <= 40))){
+			event.preventDefault();
+		}
+		if(numins[i].value.length >= 3){
+			numins[i].value = numins[i].value.substr(0, 3);
+			event.preventDefault();
+		}
+	}
+}
+
+document.getElementById("text").oninput = function(){
+	document.getElementById("area").innerHTML = typify(this.value);
+}
+
+});
+
+function typify(text){
+	text = text.replace(/\&/g, "&amp;").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+	text = text
+	.replace(/\&lt;.*?\&gt;/g, function(i){
+		return '<span class="hl-tag">' + i + "</span>";
+	})
+	.replace(/\&lt;.*? .*?\&gt;/g, function(i){
+		//return '<span class="hl-tag">' + i + "</span>";
+		i = i
+		.replace(/ .*/g, function(j){
+			return '<span class="hl-attr">' + j + "</span>";
+		})
+		.replace(/\&gt;/g, '</span><span class="hl-tag">&gt;</span>');
+		return '<span class="hl-tag">' + i;
+	})
+	.replace(/\&amp;.*?;/g, function(i){
+		return '<span class="hl-entity">' + i + "</span>";
+	});
+	return text;
+}
+		</script>
+	</head>
+	<body>
+		<header>
+			<input class="numberinput" id="fontsize" />
+			<!--input class="numberinput" id="idk" /-->
+		</header>
+		<textarea id="text"></textarea>
+		<div id="area"></div>
+	</body>
+</html>
