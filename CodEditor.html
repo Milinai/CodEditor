@@ -30,21 +30,29 @@ input{
 ::-webkit-inner-spin-button, ::-webkit-outer-spin-button{
 	display: none;
 }
-#text{
-	
-}
-#text, #area{
-	padding: 5px;
-	font-family: monospace;
-	background-color: #FFF;
+.editor{
+	overflow-y: scroll;
 	position: fixed;
 	top: 100px;
 	left: 0;
 	width: 100vw;
 	height: calc(100vh - 100px);
+}
+#text{
+	
+}
+#text, #area{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 5px;
+	font-family: monospace;
+	background-color: #FFF;
 	cursor: text;
 	font-size: var(--fontsize);
 	white-space: pre-wrap;
+	resize: none;
 }
 #area{
 	pointer-events: none;
@@ -77,14 +85,33 @@ for(let i = 0; i < numins.length; i++){
 	}
 }
 
+document.getElementById("text").onkeydown = function(){
+	if(event.keyCode === 9){
+		let pos = this.selectionStart + 1;
+		this.value = this.value.substr(0, this.selectionStart) + "\t" + this.value.substr(this.selectionEnd, this.value.length);
+		this.selectionStart = this.selectionEnd = pos;
+		event.preventDefault();
+	}
+	updateArea(this);
+}
 document.getElementById("text").oninput = function(){
-	document.getElementById("area").innerHTML = typify(this.value);
+	updateArea(this);
 }
 
 });
 
+function updateArea(that){
+	
+	document.getElementById("caret").style.top =  + "px";
+	document.getElementById("area").innerHTML = formatHTML(typify(that.value));
+	that.style.height = "0";
+	that.style.height = document.getElementById("area").style.height = that.scrollHeight + "px";
+}
+
 function typify(text){
-	text = text.replace(/\&/g, "&amp;").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+	return text.replace(/\&/g, "&amp;").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+}
+function formatHTML(text){
 	text = text
 	.replace(/\&lt;(.|\n)*?\&gt;/gm, function(i){
 		i = i
@@ -103,9 +130,13 @@ function typify(text){
 	<body>
 		<header>
 			<input class="numberinput" id="fontsize" />
-			<!--input class="numberinput" id="idk" /-->
+			<input class="numberinput" id="linespace" />
 		</header>
-		<textarea id="text"></textarea>
-		<div id="area"></div>
+		<div class="editor">
+			<textarea id="text"></textarea>
+			<!--div id="text" contenteditable></div-->
+			<div id="area"></div>
+			<div id="caret"></div>
+		</div>
 	</body>
 </html>
