@@ -13,6 +13,7 @@
 }
 body{
 	--fontsize: 11px;
+	height: 100vh;
 }
 header{
 	height: 100px;
@@ -95,35 +96,41 @@ document.getElementById("text").onkeydown = function(){
 	updateArea(this);
 }
 document.getElementById("text").oninput = function(){
-	updateArea(this);
+	updateArea();
+}
+
+window.onresize = function(){
+	//document.body.offsetHeight;
+	updateArea();
 }
 
 });
 
-function updateArea(that){
-	
+function updateArea(){
 	document.getElementById("caret").style.top =  + "px";
 	document.getElementById("area").innerHTML = formatHTML(typify(that.value));
-	that.style.height = "0";
-	that.style.height = document.getElementById("area").style.height = that.scrollHeight + "px";
+	document.getElementById("text").style.height = "0";
+	document.getElementById("text").style.height = document.getElementById("area").style.height = document.getElementById("text").scrollHeight + document.body.offsetHeight + "px";
 }
 
 function typify(text){
 	return text.replace(/\&/g, "&amp;").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
 }
-function formatHTML(text){
-	text = text
-	.replace(/\&lt;(.|\n)*?\&gt;/gm, function(i){
-		i = i
-		.replace(/\s.*?(?=\&gt;)/g, function(j){
-			return '<span class="hl-attr">' + j + "</span>";
+function langformat(text, lang){
+	if(lang === "html"){
+		text = text
+		.replace(/\&lt;(.|\n)*?\&gt;/gm, function(i){
+			i = i
+			.replace(/\s.*?(?=\&gt;)/g, function(j){
+				return '<span class="hl-attr">' + j + "</span>";
+			});
+			return '<span class="hl-tag">' + i + "</span>";
+		})
+		.replace(/\&amp;(.|\n)*?;/g, function(i){
+			return '<span class="hl-entity">' + i + "</span>";
 		});
-		return '<span class="hl-tag">' + i + "</span>";
-	})
-	.replace(/\&amp;(.|\n)*?;/g, function(i){
-		return '<span class="hl-entity">' + i + "</span>";
-	});
-	return text;
+		return text;
+	}
 }
 		</script>
 	</head>
