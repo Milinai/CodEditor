@@ -38,18 +38,34 @@ input{
 .tabs{
 	width: 100vw;
 	height: 20px;
-	margin-top: 10px;
+	margin-top: 38px;
+	user-select: none;
+}
+#tabs{
+	display: inline-block;
+	padding-left: 7px;
 }
 .tab{
 	display: inline-block;
-	background-color: #FFF;
-	padding: 3px;
+	background-color: #EEE;
+	padding: 3px 5px;
 	font-size: 14px;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
-	border-top: 1px solid #DDD;
-	border-left: 1px solid #DDD;
-	border-right: 1px solid #DDD;
+	border: 1px solid #DDD;
+	height: 22px;
+	min-width: 22px;
+	text-align: center;
+}
+.selectedtab{
+	border-bottom: 1px solid #FFF;
+	background-color: #FFF;
+}
+.tab input{
+	margin: 0;
+	box-shadow: none;
+	background-color: #0000;
+	font-size: 13px;
 }
 
 .editor{
@@ -107,6 +123,9 @@ input{
 .hl-comment{
 	color: #0C0;
 }
+.hl-keyword{
+	color: #05F;
+}
 		</style>
 		<style id="settings"></style>
 		<script>
@@ -140,13 +159,16 @@ document.getElementById("text").oninput = function(){
 }
 
 document.getElementById("newtab").onclick = function(){
-	/*
-}
-document.getElementById("createtab").onclick = function(){*/
 	let newt = document.createElement("div");
 	newt.setAttribute("class", "tab");
-	newt.innerHTML = "index.html";
+	newt.innerHTML = '<input style="width: 10px;" />';
+	newt.children[0].oninput = function(){
+		this.style.width = "10px";
+		this.style.width = this.scrollWidth + "px";
+	}
 	document.getElementById("tabs").appendChild(newt);
+	newt.children[0].focus();
+	newt.children[0].select();
 }
 
 window.onresize = function(){
@@ -155,6 +177,12 @@ window.onresize = function(){
 }
 
 });
+
+function deselectTabs(){
+	for(let i = 0; i < document.getElementById("tabs").children.length; i++){
+		document.getElementById("tabs").children[i].setAttribute("class", "tab");
+	}
+}
 
 function updateArea(){
 	document.getElementById("area").innerHTML = langformat(typify(document.getElementById("text").value), "html" /* Change this to file extension */);
@@ -218,8 +246,7 @@ function langformat(text, lang){
 			<input class="numberinput" id="fontsize" />
 			<input class="numberinput" id="linespace" />
 			<div class="tabs">
-				<div id="tabs"></div>
-				<div id="newtab" class="tab">+</div>
+				<div id="tabs"></div><div id="newtab" class="tab">+</div>
 			</div>
 		</header>
 		<div class="editor">
