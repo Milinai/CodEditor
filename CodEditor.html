@@ -24,6 +24,9 @@ header{
 input{
 	box-shadow: 0 0 2px #0009;
 	background-color: #FFF;
+	display: block;
+	width: 30px;
+	margin: 5px;
 }
 :-ms-clear{
 	display: none;
@@ -39,8 +42,15 @@ input{
 	width: 100vw;
 	height: calc(100vh - 100px);
 }
-#text{
-	
+#calculator{
+	position: fixed;
+	/*top: 200vh;
+	left: 200vw;*/
+	font-family: monospace;
+	font-size: var(--fontsize);
+	line-spacing: var(--linespace);
+	white-space: pre-wrap;
+	word-wrap: ;
 }
 #text, #area{
 	position: absolute;
@@ -52,11 +62,20 @@ input{
 	background-color: #FFF;
 	cursor: text;
 	font-size: var(--fontsize);
+	line-space: var(--linespace);
 	white-space: pre-wrap;
 	resize: none;
 }
 #area{
 	pointer-events: none;
+}
+#caret{
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	width: 1px;
+	height: var(--fontsize);
+	background-color: #000;
 }
 .hl-tag{
 	color: #B70;
@@ -76,11 +95,11 @@ setTimeout(function(){
 
 for(let i = 0; i < numins.length; i++){
 	numins[i].onkeydown = function(){
-		if(!((48 <= event.keyCode && event.keyCode <= 57) || event.keyCode === 8 || event.keyCode === 46 || (37 <= event.keyCode && event.keyCode <= 40))){
+		if(numins[i].value.length >= 3 && event.keyCode !== 8 && event.keyCode !== 46){
+			numins[i].value = numins[i].value.substr(0, 3);
 			event.preventDefault();
 		}
-		if(numins[i].value.length >= 3){
-			numins[i].value = numins[i].value.substr(0, 3);
+		if(!((48 <= event.keyCode && event.keyCode <= 57) || event.keyCode === 8 || event.keyCode === 46 || (37 <= event.keyCode && event.keyCode <= 40))){
 			event.preventDefault();
 		}
 	}
@@ -107,10 +126,20 @@ window.onresize = function(){
 });
 
 function updateArea(){
-	document.getElementById("caret").style.top =  + "px";
-	document.getElementById("area").innerHTML = formatHTML(typify(that.value));
+	document.getElementById("area").innerHTML = langformat(typify(document.getElementById("text").value), "html" /* Change this to file extension */);
 	document.getElementById("text").style.height = "0";
 	document.getElementById("text").style.height = document.getElementById("area").style.height = document.getElementById("text").scrollHeight + document.body.offsetHeight + "px";
+
+	let temp = document.getElementById("text").value.substr(0, document.getElementById("text").selectionStart);
+	console.log(temp.lastIndexOf("\n"));
+	document.getElementById("calculator").innerHTML = ""; 
+	for(let i = 0; i < (temp.match(/\n/g) || []).length - 1; i++){
+		document.getElementById("calculator").innerHTML += "\n";
+	}
+	document.getElementById("calculator").innerHTML += typify(temp.substr(temp.lastIndexOf("\n") + 1, document.getElementById("text").selectionStart));
+	console.log(document.getElementById("calculator").offsetHeight);
+	document.getElementById("caret").style.top = document.getElementById("calculator").offsetHeight + 5 + "px";
+	document.getElementById("caret").style.left = document.getElementById("calculator").offsetWidth + 5 + "px";
 }
 
 function typify(text){
@@ -145,5 +174,6 @@ function langformat(text, lang){
 			<div id="area"></div>
 			<div id="caret"></div>
 		</div>
+		<div id="calculator"></div>
 	</body>
 </html>
