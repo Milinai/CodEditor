@@ -34,6 +34,24 @@ input{
 ::-webkit-inner-spin-button, ::-webkit-outer-spin-button{
 	display: none;
 }
+
+.tabs{
+	width: 100vw;
+	height: 20px;
+	margin-top: 10px;
+}
+.tab{
+	display: inline-block;
+	background-color: #FFF;
+	padding: 3px;
+	font-size: 14px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-top: 1px solid #DDD;
+	border-left: 1px solid #DDD;
+	border-right: 1px solid #DDD;
+}
+
 .editor{
 	overflow-y: scroll;
 	position: fixed;
@@ -50,7 +68,7 @@ input{
 	font-size: var(--fontsize);
 	line-spacing: var(--linespace);
 	white-space: pre-wrap;
-	word-wrap: ;
+	opacity: 0;
 }
 #text, #area{
 	position: absolute;
@@ -66,7 +84,7 @@ input{
 	white-space: pre-wrap;
 	resize: none;
 }
-#area{
+#area, #calculator{
 	pointer-events: none;
 }
 #caret{
@@ -86,10 +104,13 @@ input{
 .hl-entity{
 	color: #C00;
 }
+.hl-comment{
+	color: #0C0;
+}
 		</style>
 		<style id="settings"></style>
 		<script>
-var numins = document.getElementsByClassName("numberinput");
+var numins = document.getElementsByClassName("numberinput"), tabs = [];
 
 setTimeout(function(){
 
@@ -116,6 +137,16 @@ document.getElementById("text").onkeydown = function(){
 }
 document.getElementById("text").oninput = function(){
 	updateArea();
+}
+
+document.getElementById("newtab").onclick = function(){
+	/*
+}
+document.getElementById("createtab").onclick = function(){*/
+	let newt = document.createElement("div");
+	newt.setAttribute("class", "tab");
+	newt.innerHTML = "index.html";
+	document.getElementById("tabs").appendChild(newt);
 }
 
 window.onresize = function(){
@@ -146,7 +177,8 @@ function typify(text){
 	return text.replace(/\&/g, "&amp;").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
 }
 function langformat(text, lang){
-	if(lang === "html"){
+	switch(lang){
+	case "html":
 		text = text
 		.replace(/\&lt;(.|\n)*?\&gt;/gm, function(i){
 			i = i
@@ -157,8 +189,26 @@ function langformat(text, lang){
 		})
 		.replace(/\&amp;(.|\n)*?;/g, function(i){
 			return '<span class="hl-entity">' + i + "</span>";
+		})
+		.replace(/\&lt;\!\-\-(.|\n)*?\-\-\&gt;/g, function(i){
+			return '<span class="hl-comment">' + i + "</span>";
 		});
 		return text;
+		break;
+	case "css":
+		text = text;
+		return text;
+		break;
+	case "js":
+		text = text
+		.replace(/\/\/.*?\n/g, function(i){
+			return '<span class="hl-comment">' + i + "</span>";
+		});
+		return text;
+		break;
+	default:
+		return text;
+		break;
 	}
 }
 		</script>
@@ -167,6 +217,10 @@ function langformat(text, lang){
 		<header>
 			<input class="numberinput" id="fontsize" />
 			<input class="numberinput" id="linespace" />
+			<div class="tabs">
+				<div id="tabs"></div>
+				<div id="newtab" class="tab">+</div>
+			</div>
 		</header>
 		<div class="editor">
 			<textarea id="text"></textarea>
